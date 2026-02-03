@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SpendWise | Personal Finance</title>
+<style>
+/* Reset & Base Styles */
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Tahoma, Geneva, Verdana;}
+body { background:#f0f2f5; color:#2d3436; line-height:1.6; }
+
+/* Header - Modern Green Theme */
+header {
+  width:100%;
+  background:#27ae60;
+  color:white;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 40px;
+  position:sticky;
+  top:0;
+  z-index:1000;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+header h1 { font-size:24px; font-weight:700; letter-spacing: 1px; }
+nav a {
+  color:white;
+  text-decoration:none;
+  margin-left:25px;
+  font-weight:500;
+  transition:0.3s;
+}
+nav a:hover { color: #d1f2eb; }
+
+/* Hero Section */
+.hero {
+  padding:80px 40px;
+  text-align:center;
+  background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);
+}
+.hero h2 {
+  font-size:38px;
+  color:#1b5e20;
+  margin-bottom:20px;
+}
+.hero p { font-size:18px; margin-bottom:25px; color:#636e72; }
+.hero button {
+  padding:14px 30px;
+  font-size:16px;
+  border-radius:30px;
+  border:none;
+  cursor:pointer;
+  transition:0.3s;
+  margin:5px;
+  font-weight: 600;
+}
+.hero button.primary { background:#27ae60; color:white; }
+.hero button.primary:hover { background:#219150; transform: scale(1.05); }
+.hero button.secondary { background:white; color:#27ae60; border:2px solid #27ae60; }
+
+/* Feature Cards */
+.features {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  padding:50px 40px;
+  gap:25px;
+}
+.feature-card {
+  flex:1 1 250px;
+  background:white;
+  padding:30px;
+  border-radius:15px;
+  text-align:center;
+  box-shadow:0 4px 15px rgba(0,0,0,0.05);
+}
+.feature-card h3 { color:#27ae60; margin-bottom:10px; }
+
+/* Modal */
+.modal {
+  display:none;
+  position:fixed;
+  top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
+  z-index:10000;
+}
+.modal-content {
+  background:white;
+  padding:40px;
+  border-radius:15px;
+  width:400px;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+.hidden { display:none !important; }
+.modal-content input {
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #dfe6e9;
+}
+.modal-content button {
+  padding:12px;
+  background:#27ae60;
+  color:white;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* Dashboard Area */
+#dashboard {
+  display:none;
+  max-width:900px;
+  margin:40px auto;
+  padding:30px;
+  background:white;
+  border-radius:15px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+.stat-box {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    border-left: 5px solid #27ae60;
+}
+form input, form select, form button {
+  width:100%; margin:8px 0; padding:12px; border-radius:8px; border:1px solid #ced4da;
+}
+form button { background:#27ae60; color:white; border:none; cursor:pointer; font-weight:bold; }
+
+#transaction-list { list-style:none; margin-top:20px; }
+#transaction-list li {
+  display: flex;
+  justify-content: space-between;
+  padding:15px;
+  border-bottom:1px solid #eee;
+  font-size:15px;
+}
+.amt-expense { color: #e74c3c; font-weight: bold; }
+.amt-income { color: #27ae60; font-weight: bold; }
+
+@media(max-width:600px){ .stats-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>SpendWise</h1>
+  <nav>
+    <a href="#" id="open-login">Sign In</a>
+    <a href="#dashboard">My Wallet</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <h2>Smart Tracking for Smarter Savings</h2>
+  <p>Take control of your money. Track expenses, set budgets, and watch your wealth grow.</p>
+  <button class="primary" onclick="document.getElementById('open-login').click()">Get Started Free</button>
+</section>
+
+<section class="features">
+  <div class="feature-card"><h3>Daily Tracking</h3><p>Log your coffee, bills, and rent in seconds.</p></div>
+  <div class="feature-card"><h3>Budget Alerts</h3><p>Get notified when you're spending too fast.</p></div>
+  <div class="feature-card"><h3>Secure Data</h3><p>Your financial data stays on your device.</p></div>
+</section>
+
+<div class="modal" id="login-modal">
+  <div class="modal-content">
+    <h2 id="modal-title">Welcome Back</h2>
+    <input type="text" id="modal-name" placeholder="Full Name" class="hidden">
+    <input type="email" id="modal-email" placeholder="Email Address">
+    <input type="password" id="modal-password" placeholder="Password">
+    <button id="modal-btn">Login</button>
+    <div style="text-align:center; cursor:pointer; color:#27ae60;" id="switch-modal">New here? Create account</div>
+  </div>
+</div>
+
+<section id="dashboard">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h2>Hello, <span id="user-name"></span>!</h2>
+    <button id="logout-btn" style="background:#ff7675; color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">Logout</button>
+  </div>
+
+  <div class="stats-grid">
+      <div class="stat-box">
+          <small>Balance</small>
+          <h2 id="total-balance">$0.00</h2>
+      </div>
+      <div class="stat-box" style="border-left-color: #e74c3c;">
+          <small>Total Spent</small>
+          <h2 id="total-spent">$0.00</h2>
+      </div>
+  </div>
+
+  <h3>Log New Transaction</h3>
+  <form id="finance-form">
+    <input type="text" id="desc" placeholder="Description (e.g. Grocery, Salary)" required>
+    <input type="number" id="amount" placeholder="Amount ($)" required>
+    <select id="type">
+        <option value="expense">Expense</option>
+        <option value="income">Income</option>
+    </select>
+    <select id="category">
+        <option value="Food">Food & Dining</option>
+        <option value="Shopping">Shopping</option>
+        <option value="Rent">Housing/Rent</option>
+        <option value="Transport">Transportation</option>
+        <option value="Work">Income/Work</option>
+    </select>
+    <input type="date" id="date" required>
+    <button type="submit">Add to Ledger</button>
+  </form>
+
+  <h3 style="margin-top:30px;">Recent Transactions</h3>
+  <ul id="transaction-list"></ul>
+</section>
+
+<script>
+let isRegister = false;
+let currentUser = null;
+
+// UI Selectors
+const modal = document.getElementById('login-modal');
+const openLogin = document.getElementById('open-login');
+const switchModal = document.getElementById('switch-modal');
+const modalTitle = document.getElementById('modal-title');
+const modalBtn = document.getElementById('modal-btn');
+const nameInput = document.getElementById('modal-name');
+const emailInput = document.getElementById('modal-email');
+const passwordInput = document.getElementById('modal-password');
+const dashboard = document.getElementById('dashboard');
+const userNameSpan = document.getElementById('user-name');
+const logoutBtn = document.getElementById('logout-btn');
+const financeForm = document.getElementById('finance-form');
+const transactionList = document.getElementById('transaction-list');
+
+// Auth Logic
+openLogin.onclick = () => modal.style.display='flex';
+window.onclick = e => { if(e.target===modal) modal.style.display='none'; }
+
+switchModal.onclick = () => {
+  isRegister = !isRegister;
+  modalTitle.textContent = isRegister ? 'Join SpendWise' : 'Welcome Back';
+  modalBtn.textContent = isRegister ? 'Create Account' : 'Login';
+  nameInput.classList.toggle('hidden');
+  switchModal.textContent = isRegister ? 'Already have an account? Login' : 'New here? Create account';
+}
+
+modalBtn.onclick = () => {
+  const users = JSON.parse(localStorage.getItem('sw_users') || '[]');
+  if(isRegister) {
+    const newUser = { name: nameInput.value, email: emailInput.value, password: passwordInput.value };
+    users.push(newUser);
+    localStorage.setItem('sw_users', JSON.stringify(users));
+    alert('Account created!');
+    switchModal.click();
+  } else {
+    const user = users.find(u => u.email === emailInput.value && u.password === passwordInput.value);
+    if(user) {
+      currentUser = user;
+      localStorage.setItem('sw_curr', JSON.stringify(user));
+      modal.style.display = 'none';
+      initDashboard();
+    } else { alert('Wrong credentials'); }
+  }
+}
+
+// Finance Logic
+financeForm.onsubmit = (e) => {
+  e.preventDefault();
+  const logs = JSON.parse(localStorage.getItem('sw_logs') || '[]');
+  logs.push({
+    user: currentUser.email,
+    desc: document.getElementById('desc').value,
+    amount: parseFloat(document.getElementById('amount').value),
+    type: document.getElementById('type').value,
+    category: document.getElementById('category').value,
+    date: document.getElementById('date').value
+  });
+  localStorage.setItem('sw_logs', JSON.stringify(logs));
+  financeForm.reset();
+  renderData();
+}
+
+function renderData() {
+  const logs = JSON.parse(localStorage.getItem('sw_logs') || '[]').filter(l => l.user === currentUser.email);
+  transactionList.innerHTML = '';
+  let balance = 0;
+  let spent = 0;
+
+  logs.forEach(l => {
+    const li = document.createElement('li');
+    const isExp = l.type === 'expense';
+    balance += isExp ? -l.amount : l.amount;
+    if(isExp) spent += l.amount;
+
+    li.innerHTML = `
+      <span><strong>${l.desc}</strong><br><small>${l.date} • ${l.category}</small></span>
+      <span class="${isExp ? 'amt-expense' : 'amt-income'}">${isExp ? '-' : '+'}$${l.amount.toFixed(2)}</span>
+    `;
+    transactionList.appendChild(li);
+  });
+
+  document.getElementById('total-balance').textContent = `$${balance.toFixed(2)}`;
+  document.getElementById('total-spent').textContent = `$${spent.toFixed(2)}`;
+}
+
+function initDashboard() {
+  dashboard.style.display = 'block';
+  userNameSpan.textContent = currentUser.name;
+  renderData();
+}
+
+logoutBtn.onclick = () => {
+  localStorage.removeItem('sw_curr');
+  location.reload();
+}
+
+window.onload = () => {
+  const saved = localStorage.getItem('sw_curr');
+  if(saved) { currentUser = JSON.parse(saved); initDashboard(); }
+}
+</script>
+</body>
+</html>
